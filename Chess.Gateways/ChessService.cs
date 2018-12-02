@@ -1,4 +1,5 @@
-﻿using Chess.Gateways.Settings;
+﻿using Chess.Gateways.Models;
+using Chess.Gateways.Settings;
 using Chess.Gateways.Utils;
 
 namespace Chess.Gateways
@@ -19,9 +20,9 @@ namespace Chess.Gateways
             throw new System.NotImplementedException();
         }
 
-        public void Move()
+        public string Move(MovementState movementState)
         {
-            throw new System.NotImplementedException();
+            return "No movement info yet!";
         }
     }
 }

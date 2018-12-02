@@ -1,9 +1,11 @@
-﻿namespace Chess.Gateways
+﻿using Chess.Gateways.Models;
+
+namespace Chess.Gateways
 {
     public interface IChessService
     {
         void Game();
 
-        void Move();
+        string Move(MovementState state);
     }
 }

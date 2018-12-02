@@ -1,15 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Chess.Gateways;
+using Chess.Gateways.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Chess.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/chess")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ChessController : ControllerBase
     {
-        [HttpPost("move")]
-        public IActionResult GetMoveInfo()
+        private readonly IChessService chessService;
+
+        public ChessController(IChessService chessService)
         {
-            return Ok("No moe info yet!");
+            this.chessService = chessService;
+        }
+
+        [HttpPost("move")]
+        public IActionResult GetMoveInfo([FromBody] MovementState movementState)
+        {
+            var result = chessService.Move(movementState);
+            return Ok(result);
         }
 
         [HttpPost("game")]
