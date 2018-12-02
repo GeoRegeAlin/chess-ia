@@ -17,12 +17,14 @@ namespace Chess.Gateways
 
         public void Game()
         {
-            throw new System.NotImplementedException();
         }
 
-        public string Move(MovementState movementState)
+        public MovementResult Move(MovementState movementState)
         {
-            return "No movement info yet!";
+            return new MovementResult
+            {
+                Result = "No movement result yet!"
+            };
         }
     }
 }

@@ -6,6 +6,6 @@ namespace Chess.Gateways
     {
         void Game();
 
-        string Move(MovementState state);
+        MovementResult Move(MovementState state);
     }
 }

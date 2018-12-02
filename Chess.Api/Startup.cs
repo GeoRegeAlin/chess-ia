@@ -11,6 +11,8 @@ namespace Chess.Api
 {
     public class Startup
     {
+        private const string CorsPolicyName = "AllowAny";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -21,6 +23,12 @@ namespace Chess.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddCors(o => o.AddPolicy(CorsPolicyName, builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             services.AddSingleton<IJsonClient, JsonClient>();
             services.AddScoped<IChessService, ChessService>();
@@ -39,6 +47,7 @@ namespace Chess.Api
                 app.UseHsts();
             }
 
+            app.UseCors(CorsPolicyName);
             app.UseHttpsRedirection();
             app.UseMvc();
         }
