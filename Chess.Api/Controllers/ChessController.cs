@@ -6,16 +6,16 @@ namespace Chess.Api.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        [HttpGet("game")]
-        public IActionResult GetGameInfo()
-        {
-            return Ok("No game info yet!");
-        }
-
-        [HttpGet]
+        [HttpPost("move")]
         public IActionResult GetMoveInfo()
         {
             return Ok("No moe info yet!");
+        }
+
+        [HttpPost("game")]
+        public IActionResult GetGameInfo()
+        {
+            return Ok("No game info yet!");
         }
     }
 }
