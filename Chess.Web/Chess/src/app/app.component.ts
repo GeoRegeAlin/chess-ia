@@ -1,13 +1,20 @@
 import { Component } from '@angular/core';
 import * as $ from 'jquery';
-// declare var $: any
+import { ChessBoardService } from './chess-board/chess-board.service';
+
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor() {
-    window['jQuery'] = $;
-  }
+    public fen: string = "";
+
+    constructor(private chessBoardService: ChessBoardService) {
+        window['jQuery'] = $;
+    }
+
+    public drawChessBoard(): void {
+        this.chessBoardService.draw(this.fen);
+    }
 }
