@@ -82,14 +82,59 @@ export class ChessBoardService {
     }
     return true;
   }
-  public pgnTypeMove(move: string, board: any): any {
+  private castling(board,player,item)
+  {
+    //VERIFICATION FOR CASTLING
+    let boardAfterCastling = board.position();
+    if(player === 'w')
+    {
+        if(item==="O-O")
+        {   
+            delete boardAfterCastling["e1"];
+            delete boardAfterCastling["h1"];
+            boardAfterCastling["g1"]="wK";
+            boardAfterCastling["f1"]="wR";
+        }
+        if(item==="O-O-O")
+        {
+            delete boardAfterCastling["e1"];
+            delete boardAfterCastling["a1"];
+            boardAfterCastling["b1"]="wK";
+            boardAfterCastling["c1"]="wR";
+        }
+    }
+    else
+    {
+        if(item==="O-O")
+        {   
+            delete boardAfterCastling["e8"];
+            delete boardAfterCastling["h8"];
+            boardAfterCastling["g8"]="bK";
+            boardAfterCastling["f8"]="bR";
+        }
+        if(item==="O-O-O")
+        {
+            delete boardAfterCastling["e8"];
+            delete boardAfterCastling["a8"];
+            boardAfterCastling["b8"]="bK";
+            boardAfterCastling["c8"]="bR";
+        }
+    }
+    board.position(boardAfterCastling,false);
+  }
+ public pgnTypeMove(move: string, board: any): any {
     let moveArray = move.split(" ");
     let player = 'w';
     for (let item of moveArray.slice(1)) {
       if (item !== "") {
         let m = new Move(item);
+        console.log(item);
+        if(item=== "O-O" || item === "O-O-O")
+            this.castling(board,player,item);
+        else {
         m.calculateOrigin(board, player);
         this.makeMove(m, board);
+        }
         player = 'b';
       }
     }
