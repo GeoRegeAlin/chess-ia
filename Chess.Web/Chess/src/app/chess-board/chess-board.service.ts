@@ -25,16 +25,20 @@ export class ChessBoardService {
 
   public validateMove(move: Move, board: any) {
     if (!move.getElimination()) {
+      if (move.getPiece() === 'P') {
+        if (move.getDirection()[0] !== 0) {
+          return false;
+        }
+      }
       if (board.position().hasOwnProperty(move.getDestinationString())) {
         return false;
       }
     } else {
       if (board.position().hasOwnProperty(move.getDestinationString())) {
         if (board.position()[move.getDestinationString()]) {
-            if(board.position()[move.getDestinationString()][0]===move.getPlayer())
-            {
-                return false;
-            }
+          if (board.position()[move.getDestinationString()][0] === move.getPlayer()) {
+            return false;
+          }
         }
       }
     }
@@ -57,7 +61,6 @@ export class ChessBoardService {
         r += d[1];
       }
     }
-
     return true;
   }
   public makeMove(move: Move, board: any) {

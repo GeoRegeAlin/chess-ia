@@ -120,7 +120,8 @@ export class Move {
           if (position[result] == currentPiece) {
             this.origin.setFile(String.fromCharCode(f));
             this.origin.setRank(r);
-            this.direction = item;
+            this.direction.push(-1*item[0]);
+            this.direction.push(-1*item[1]);
             break;
           }
         }
