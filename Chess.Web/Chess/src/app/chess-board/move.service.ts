@@ -68,9 +68,9 @@ export class Move {
       move = move.slice(1);
     } else
       this.piece = 'P';
-    if (move[move.length - 1] === '+') {
+    if (move.includes('x')) {
       this.elimination = true;
-      move = move.replace('+', '');
+      move = move.replace('x', '');
     }
     this.origin = new BoardSquare();
     this.destination = new BoardSquare();
