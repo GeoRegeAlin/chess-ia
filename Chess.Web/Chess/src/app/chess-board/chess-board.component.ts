@@ -38,7 +38,7 @@ export class ChessBoardComponent implements OnInit {
         };
       },
     };
-    this.board = ChessBoard('board', cfg);  
+    this.board = ChessBoard('board', cfg);
     this.chessBoardService.chessBoardState.subscribe((exp) => {
 
       var fenExtendedType = /([prnbqkPRNBQK12345678]*\/){7}([prnbqkPRNBQK12345678]*) ?((w|b) ((K?Q?k?q?)|\-) (([abcdefgh][36])|\-) (\d*) (\d*))?/;
@@ -50,16 +50,13 @@ export class ChessBoardComponent implements OnInit {
         }).subscribe((data) => {
           this.movementData = data.result;
         });
+      } else {
+        var pgnType = /((\d*.) (([KQRBNP]?[a-h]?[1-8]?[x]?[a-h][1-8])|(O-O)|(O-O-O))[+#]? (([KQRBNP]?[a-h]?[1-8]?[x]?[a-h][1-8])|(O-O)|(O-O-O))[+#]?)/g;
+        var found = exp.match(pgnType);
+        for (let item of found) {
+          this.chessBoardService.pgnTypeMove(item, this.board);
+        }
       }
-      else{
-       var pgnType =/((\d*.) (([KQRBNP]?[a-h]?[1-8]?[x]?[a-h][1-8])|(O-O)|(O-O-O))[+#]? (([KQRBNP]?[a-h]?[1-8]?[x]?[a-h][1-8])|(O-O)|(O-O-O))[+#]?)/g;
-       var found = exp.match(pgnType);
-       console.log(this.board.position()); 
-       for (let item of found)
-       {
-        console.log(this.chessBoardService.pgnTypeMove(item,this.board));
-       }
-    }
 
     });
   }
