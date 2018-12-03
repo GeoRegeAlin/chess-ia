@@ -23,7 +23,7 @@ export class ChessBoardService {
     return this.fenSubject.asObservable();
   }
 
-  public validateMove(move: Move, board: any) {
+    public  validateMove(move: Move, board: any) {
     if (!move.getElimination()) {
       if (move.getPiece() === 'P') {
         if (move.getDirection()[0] !== 0) {
@@ -122,17 +122,16 @@ export class ChessBoardService {
     }
     board.position(boardAfterCastling,false);
   }
- public pgnTypeMove(move: string, board: any): any {
+  public async pgnTypeMove(move: string, board: any): Promise<any> {
     let moveArray = move.split(" ");
     let player = 'w';
     for (let item of moveArray.slice(1)) {
       if (item !== "") {
         let m = new Move(item);
-        console.log(item);
         if(item=== "O-O" || item === "O-O-O")
-            this.castling(board,player,item);
+            await this.castling(board,player,item);
         else {
-        m.calculateOrigin(board, player);
+        await m.calculateOrigin(board, player);
         this.makeMove(m, board);
         }
         player = 'b';

@@ -27,7 +27,7 @@ export class ChessBoardComponent implements OnInit {
 
   constructor(private chessBoardService: ChessBoardService, private chessService: ChessService) {}
 
-  public ngOnInit(): void {
+  public  ngOnInit():any {
     let cfg = {
       draggable: false,
       position: 'start',
@@ -39,7 +39,7 @@ export class ChessBoardComponent implements OnInit {
       },
     };
     this.board = ChessBoard('board', cfg);
-    this.chessBoardService.chessBoardState.subscribe((exp) => {
+     this.chessBoardService.chessBoardState.subscribe(async(exp) =>  {
 
       var fenExtendedType = /([prnbqkPRNBQK12345678]*\/){7}([prnbqkPRNBQK12345678]*) ?((w|b) ((K?Q?k?q?)|\-) (([abcdefgh][36])|\-) (\d*) (\d*))?/;
       var isFen = fenExtendedType.test(exp);
@@ -54,7 +54,7 @@ export class ChessBoardComponent implements OnInit {
         var pgnType = /((\d*.) (([KQRBNP]?[a-h]?[1-8]?[x]?[a-h][1-8])|(O-O)|(O-O-O))[+#]? (([KQRBNP]?[a-h]?[1-8]?[x]?[a-h][1-8])|(O-O)|(O-O-O))[+#]?)/g;
         var found = exp.match(pgnType);
         for (let item of found) {
-          this.chessBoardService.pgnTypeMove(item, this.board);
+             await this.chessBoardService.pgnTypeMove(item, this.board);
         }
       }
 

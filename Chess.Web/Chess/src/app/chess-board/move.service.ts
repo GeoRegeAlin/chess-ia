@@ -42,19 +42,20 @@ const piecesMove = {
   wP: [
     [0, -1],
     [0, -2],
-    [-1, 1],
+    [1, -1],
     [-1, -1]
   ],
   bP: [
     [0, 1],
     [0, 2],
     [1, 1],
-    [1, -1]
+    [-1, 1]
   ]
 };
 import {
   BoardSquare
 } from './boardSquare';
+import { ChessBoardService } from './chess-board.service';
 export class Move {
   private piece: string;
   private origin: BoardSquare;
@@ -284,7 +285,6 @@ export class Move {
           if (this.origin.getRank() !== 0) {
             if (this.origin.getRank() !== Number(item[1])) rightChoice = false;
           }
-          
           
           
           if (rightChoice) {
