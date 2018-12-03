@@ -62,8 +62,19 @@ export class Move {
   private elimination: Boolean = false;
   private direction = [];
   private player;
+  private stage: number;
   constructor(move: string) {
-    if (move[0] === move[0].toUpperCase()) {
+
+    if (move.includes('+')) {
+      this.stage = 1;
+      move = move.replace('+', '');
+    } else if (move.includes('#')) {
+      this.stage = 2;
+      move = move.replace('#', '');
+    } else {
+      this.stage = 3;
+    }
+    if (move[0] === move[0].toUpperCase() && '12345678'.includes(move[0]) === false) {
       this.piece = move[0];
       move = move.slice(1);
     } else
@@ -72,13 +83,20 @@ export class Move {
       this.elimination = true;
       move = move.replace('x', '');
     }
+
     this.origin = new BoardSquare();
     this.destination = new BoardSquare();
     this.destination.setFile(move[move.length - 2]);
     this.destination.setRank(Number(move[move.length - 1]));
-    /*
-    IMPLEMENT RECIEVING DESTINATION
-    */
+
+    if (move.length === 3) {
+      if ('abcdefgh'.includes(move[0])) this.origin.setFile(move[0])
+      if ('12345678'.includes(move[0])) this.origin.setRank(Number(move[0]));
+    }
+    if (move.length === 4) {
+      this.origin.setFile(move[0])
+      this.origin.setRank(Number(move[1]));
+    }
   }
 
   public getPiece(): string {
@@ -87,7 +105,7 @@ export class Move {
   public getElimination(): Boolean {
     return this.elimination;
   }
-  public getPlayer(){
+  public getPlayer() {
     return this.player;
   }
   public getDestination(): BoardSquare {
@@ -106,23 +124,42 @@ export class Move {
     return String(this.destination.getFile() + this.destination.getRank());
   }
   public calculateOrigin(board: any, player: string) {
-    this.player=player;
+    this.player = player;
     let position = board.position()
     let currentPiece = player + this.piece;
     // FIX ATTACK ON DIAGONAL FOR PEON
 
     if (["wP", "bP", "wN", "bN", "wK", "bK"].includes(currentPiece)) {
       for (let item of piecesMove[currentPiece]) {
+
         let f = this.destination.getFile().charCodeAt(0) + item[0];
         let r = this.destination.getRank() + item[1];
         let result = String.fromCharCode(f) + String(r);;
         if (position.hasOwnProperty(result)) {
           if (position[result] == currentPiece) {
-            this.origin.setFile(String.fromCharCode(f));
-            this.origin.setRank(r);
-            this.direction.push(-1*item[0]);
-            this.direction.push(-1*item[1]);
-            break;
+
+            if (this.origin.getFile() === "" && this.origin.getRank() === 0) {
+
+              this.origin.setFile(String.fromCharCode(f));
+              this.origin.setRank(r);
+              this.direction.push(-1 * item[0]);
+              this.direction.push(-1 * item[1]);
+              break;
+            } else {
+              if (this.origin.getFile() === result[0]) {
+                this.direction.push(-1 * item[0]);
+                this.direction.push(-1 * item[1]);
+                this.origin.setRank(r);
+                break;
+              }
+              if (this.origin.getRank() === Number(result[1])) {
+                this.direction.push(-1 * item[0]);
+                this.direction.push(-1 * item[1]);
+                this.origin.setFile(String.fromCharCode(f));
+                break;
+              }
+            }
+
           }
         }
       }
@@ -136,52 +173,57 @@ export class Move {
           let r = Number(this.destination.getRank());
           let f1 = Number(item[0].charCodeAt(0));
           let r1 = Number(item[1]);
-
-          if (Math.abs(f1 - f) === Math.abs(r1 - r)) {
-            this.origin.setFile(String.fromCharCode(f1));
-            this.origin.setRank(r1);
-            if (f > f1) {
-              this.direction.push(1);
-              if (r > r1) {
-                this.direction.push(1);
+          let rightChoice = true;
+          if (this.origin.getFile() !== "") {
+            if (this.origin.getFile() !== item[0]) rightChoice = false;
+          }
+          if (this.origin.getRank() !== 0) {
+            if (this.origin.getRank() !== Number(item[1])) rightChoice = false;
+          }
+          if (rightChoice)
+            if (Math.abs(f1 - f) === Math.abs(r1 - r) || Math.abs(f1 - f) == 0 || Math.abs(r1 - r) == 0) {
+              this.origin.setFile(String.fromCharCode(f1));
+              this.origin.setRank(r1);
+              if (Math.abs(f1 - f) === Math.abs(r1 - r)) {
+                if (f > f1) {
+                  this.direction.push(1);
+                  if (r > r1) {
+                    this.direction.push(1);
+                  } else {
+                    this.direction.push(-1);
+                  }
+                } else {
+                  this.direction.push(-1);
+                  if (r > r1) {
+                    this.direction.push(1);
+                  } else {
+                    this.direction.push(-1);
+                  }
+                }
+                break;
               } else {
-                this.direction.push(-1);
-              }
-            } else {
-              this.direction.push(-1);
-              if (r > r1) {
-                this.direction.push(1);
-              } else {
-                this.direction.push(-1);
+                if (Math.abs(f1 - f) === 0) {
+                  if (r1 > r) {
+                    this.direction.push(0);
+                    this.direction.push(-1);
+                  } else {
+                    this.direction.push(0);
+                    this.direction.push(1);
+                  }
+                  break;
+                } else(Math.abs(r1 - r) === 0) 
+                {
+                  if (f1 > f) {
+                    this.direction.push(-1);
+                    this.direction.push(0);
+                  } else {
+                    this.direction.push(1);
+                    this.direction.push(0);
+                  }
+                  break;
+                }
               }
             }
-            break;
-          }
-          if (Math.abs(f1 - f) == 0 || Math.abs(r1 - r) == 0) {
-            this.origin.setFile(String.fromCharCode(f1));
-            this.origin.setRank(r1);
-            if (Math.abs(f1 - f) === 0) {
-              if (r1 > r) {
-                this.direction.push(0);
-                this.direction.push(-1);
-              } else {
-                this.direction.push(0);
-                this.direction.push(1);
-              }
-              break;
-            } 
-            else(Math.abs(r1 - r) === 0)
-            {
-              if (f1 > f) {
-                this.direction.push(-1);
-                this.direction.push(0);
-              } else {
-                this.direction.push(1);
-                this.direction.push(0);
-              }
-              break;
-            }
-          }
         }
       }
     }
@@ -194,27 +236,34 @@ export class Move {
           let r = Number(this.destination.getRank());
           let f1 = Number(item[0].charCodeAt(0));
           let r1 = Number(item[1]);
-
-          if (Math.abs(f1 - f) === Math.abs(r1 - r)) {
-            this.origin.setFile(String.fromCharCode(f1));
-            this.origin.setRank(r1);
-            if (f > f1) {
-              this.direction.push(1);
-              if (r > r1) {
-                this.direction.push(1);
-              } else {
-                this.direction.push(-1);
-              }
-            } else {
-              this.direction.push(-1);
-              if (r > r1) {
-                this.direction.push(1);
-              } else {
-                this.direction.push(-1);
-              }
-            }
-            break;
+          let rightChoice = true;
+          if (this.origin.getFile() !== "") {
+            if (this.origin.getFile() !== item[0]) rightChoice = false;
           }
+          if (this.origin.getRank() !== 0) {
+            if (this.origin.getRank() !== Number(item[1])) rightChoice = false;
+          }
+          if (rightChoice)
+            if (Math.abs(f1 - f) === Math.abs(r1 - r)) {
+              this.origin.setFile(String.fromCharCode(f1));
+              this.origin.setRank(r1);
+              if (f > f1) {
+                this.direction.push(1);
+                if (r > r1) {
+                  this.direction.push(1);
+                } else {
+                  this.direction.push(-1);
+                }
+              } else {
+                this.direction.push(-1);
+                if (r > r1) {
+                  this.direction.push(1);
+                } else {
+                  this.direction.push(-1);
+                }
+              }
+              break;
+            }
         }
       }
     }
@@ -227,27 +276,40 @@ export class Move {
           let r = Number(this.destination.getRank());
           let f1 = Number(item[0].charCodeAt(0));
           let r1 = Number(item[1]);
+          let rightChoice = true;
+          let s=this.origin.getFile();
+          if (this.origin.getFile() !== "") {
+            if (s.localeCompare(item[0])!==0) rightChoice = false;
+          }
+          if (this.origin.getRank() !== 0) {
+            if (this.origin.getRank() !== Number(item[1])) rightChoice = false;
+          }
+          
+          
+          
+          if (rightChoice) {
           this.origin.setFile(String.fromCharCode(f1));
           this.origin.setRank(r1);
-          if (Math.abs(f1 - f) === 0) {
-            if (r1 > r) {
-              this.direction.push(0);
-              this.direction.push(-1);
-            } else {
-              this.direction.push(0);
-              this.direction.push(1);
+            if (Math.abs(f1 - f) === 0) {
+              if (r1 > r) {
+                this.direction.push(0);
+                this.direction.push(-1);
+              } else {
+                this.direction.push(0);
+                this.direction.push(1);
+              }
+              break;
             }
-            break;
-          }
-          if (Math.abs(r1 - r) === 0) {
-            if (f1 > f) {
-              this.direction.push(-1);
-              this.direction.push(0);
-            } else {
-              this.direction.push(1);
-              this.direction.push(0);
+            if (Math.abs(r1 - r) === 0) {
+              if (f1 > f) {
+                this.direction.push(-1);
+                this.direction.push(0);
+              } else {
+                this.direction.push(1);
+                this.direction.push(0);
+              }
+              break;
             }
-            break;
           }
         }
       }

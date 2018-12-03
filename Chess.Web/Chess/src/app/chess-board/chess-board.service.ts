@@ -64,8 +64,14 @@ export class ChessBoardService {
     return true;
   }
   public makeMove(move: Move, board: any) {
-    //VALIDATE MOVE = CHECK IF THERE ARE'T OTHER PIECES BETWEEN POSITIONS OR THE DESTINATION IS'T OCUPPIED BY THE SAME PLAYER
-    if (!this.validateMove(move, board)) return false;
+    //TO DO
+    
+    //LOGIC FOR CHECKING AND CHECKMATE MOVE
+     //LOGIC FOR SWAPING PEON FOR SOMETING ELSE IF IT IS AT THE END OF THE TABLE
+     //LOGIC FOR CASTLING ? ROCADA
+    
+    
+     if (!this.validateMove(move, board)) return false;
     if (move.getElimination()) {
       let boardAfterElim = board.position();
       boardAfterElim[move.getDestinationString()] = boardAfterElim[move.getOriginString()];
